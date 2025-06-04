@@ -70,7 +70,7 @@ func (sacp *SACP_pack) Decode(data []byte) error {
 	if len(data) < 13 {
 		return errInvalidSize
 	}
-	if data[0] != 0xAA && data[1] != 0x55 {
+	if data[0] != 0xAA || data[1] != 0x55 {
 		return errInvalidSACP
 	}
 	dataLen := binary.LittleEndian.Uint16(data[2:4])
