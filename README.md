@@ -41,7 +41,7 @@ Uploading file 'code-file2' [1.0 MB]...
   - SACP sending 100%
 Upload finished.
 
-## Use printer id
+## Use printer ID
 $ sm2uploader -host J1V19 /path/to/code-file1
 Discovering ...
 Printer IP: 192.168.1.19
