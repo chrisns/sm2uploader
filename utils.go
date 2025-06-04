@@ -77,6 +77,10 @@ func postProcess(r io.Reader) (out []byte, err error) {
 		}
 	}
 
+	if err := sc.Err(); err != nil {
+		return nil, err
+	}
+
 	if !isFixed {
 		funcs := []fix.GcodeModifier{}
 
