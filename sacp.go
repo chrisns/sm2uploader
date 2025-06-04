@@ -178,7 +178,7 @@ func SACP_connect(ip string, timeout time.Duration) (net.Conn, error) {
 	for {
 		p, err := SACP_read(conn, timeout)
 		if err != nil || p == nil {
-			// log.Println("Error reading \"hello\" responce: ", err)
+			// log.Println("Error reading \"hello\" response: ", err)
 			conn.Close()
 			return nil, err
 		}
@@ -341,7 +341,7 @@ func SACP_start_upload(conn net.Conn, filename string, gcode []byte, timeout tim
 	}
 
 	for {
-		// always receive packet, then send responce
+		// always receive packet, then send response
 		conn.SetReadDeadline(time.Now().Add(timeout))
 		p, err := SACP_read(conn, time.Second*10)
 		if err != nil {
