@@ -1,6 +1,6 @@
 [English Readme](README.md)
 
-# sm2uploader
+# SM2Uploader
 Luban 和 Cura with SnapmakerPlugin 对于新手很友好，但是我的大部分配置文件在 PrusaSlicer 中，切片后再使用 Luban 上传到打印机是非常低效的。
 这个工具提供了一步上传的能力，你可以通过命令行一次上传多个 gcode/cnc/bin固件 等文件。
 
