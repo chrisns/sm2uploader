@@ -19,7 +19,7 @@ Download [sm2uploader](https://github.com/macdylan/sm2uploader/releases)
 
 for Windows:
  - locate to the sm2uploader folder, and double-click `start-octoprint.bat`
- - type a port number for octoprint that you wish to listen
+ - Enter the port number for OctoPrint to listen on.
  - when `Server started ...` message appears, the startup was successful, do not close the cmd window, and go to the slicer software to setup a OctoPrint printer
  - use `http://127.0.0.1:(PORT NUM)` as url, click the Test Connect button, all configuration will be finished if successful.
 
