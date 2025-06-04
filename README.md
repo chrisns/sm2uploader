@@ -1,13 +1,13 @@
 [中文说明|Chinese Readme](README.zh-cn.md)
 
-# sm2uploader
+# SM2Uploader
 A command-line tool for send the gcode file to Snapmaker Printers via WiFi connection.
 
 ## Features:
 - Auto discover printers (UDP broadcast, same as Snapmaker Luban)
 - Uploads aren’t restricted by the printer’s active toolhead or module
 - Simulated a OctoPrint server, so that it can be in any slicing software such as Cura/PrusaSlicer/SuperSlicer/OrcaSlicer send gcode to the printer
-- Smart pre-heat for switch tools, shutoff nozzles that are no longer in use, and other optimization features for multi-extruders.
+- Smart preheat when switching tools, shut off nozzles that are no longer in use, and other optimization features for multi-extruders.
 - Reinforce the prime tower to avoid it collapse for multi-filament printing
 - No need to click Yes button on the touch screen every time for authorization connect
 - Support Snapmaker 2 A150/250/350, J1, Artisan
@@ -20,7 +20,7 @@ Download [sm2uploader](https://github.com/macdylan/sm2uploader/releases)
 for Windows:
  - locate to the sm2uploader folder, and double-click `start-octoprint.bat`
  - type a port number for octoprint that you wish to listen
- - when `Server started ...` message appears, the startup was successful, do not close the cmd window, and go to the slicer software to setup a OctoPrint printer
+ - when `Server started ...` message appears, the startup was successful, do not close the command prompt window, and go to the slicer software to setup a OctoPrint printer
  - use `http://127.0.0.1:(PORT NUM)` as url, click the Test Connect button, all configuration will be finished if successful.
 
 ```bash
