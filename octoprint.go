@@ -33,24 +33,24 @@ type stats struct {
 }
 
 type last struct {
-	filaname string
+	filename string
 	size     int64
 	time     time.Time
 }
 
-func (s *stats) addSuccess(filaname string, size int64) {
+func (s *stats) addSuccess(filename string, size int64) {
 	s.success++
 	s.lastSuccess = &last{
-		filaname: normalizedFilename(filaname),
+		filename: normalizedFilename(filename),
 		size:     size,
 		time:     time.Now(),
 	}
 }
 
-func (s *stats) addFailure(filaname string, size int64) {
+func (s *stats) addFailure(filename string, size int64) {
 	s.failure++
 	s.lastFailure = &last{
-		filaname: normalizedFilename(filaname),
+		filename: normalizedFilename(filename),
 		size:     size,
 		time:     time.Now(),
 	}
@@ -65,8 +65,8 @@ func (s *stats) String() string {
 	buf.WriteString("memory alloc: " + humanReadableSize(int64(s.memory)) + "\n")
 	buf.WriteString("uptime: " + time.Since(s.start).String() + "\n")
 	buf.WriteString(fmt.Sprintf("success: %d, failure: %d\n", s.success, s.failure))
-	buf.WriteString(fmt.Sprintf("last success: %s\n - %s (%s)\n", s.lastSuccess.time.Format(time.RFC3339), s.lastSuccess.filaname, humanReadableSize(s.lastSuccess.size)))
-	buf.WriteString(fmt.Sprintf("last failure: %s\n - %s (%s)\n", s.lastFailure.time.Format(time.RFC3339), s.lastFailure.filaname, humanReadableSize(s.lastFailure.size)))
+	buf.WriteString(fmt.Sprintf("last success: %s\n - %s (%s)\n", s.lastSuccess.time.Format(time.RFC3339), s.lastSuccess.filename, humanReadableSize(s.lastSuccess.size)))
+	buf.WriteString(fmt.Sprintf("last failure: %s\n - %s (%s)\n", s.lastFailure.time.Format(time.RFC3339), s.lastFailure.filename, humanReadableSize(s.lastFailure.size)))
 	return buf.String()
 }
 
@@ -165,12 +165,12 @@ func startOctoPrintServer(listenAddr string, printer *Printer) error {
 		success: 0,
 		failure: 0,
 		lastSuccess: &last{
-			filaname: "",
+			filename: "",
 			size:     0,
 			time:     time.Now(),
 		},
 		lastFailure: &last{
-			filaname: "",
+			filename: "",
 			size:     0,
 			time:     time.Now(),
 		},
