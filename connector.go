@@ -18,10 +18,11 @@ var (
 )
 
 type Payload struct {
-	File io.Reader
-	Name string
-	Size int64
-	Print bool
+	File    io.Reader
+	Name    string
+	Size    int64
+	Print   bool
+	Options FixOptions
 }
 
 func (p *Payload) SetName(name string) {
@@ -36,7 +37,7 @@ func (p *Payload) GetContent(nofix bool) (cont []byte, err error) {
 	if nofix || !p.ShouldBeFix() {
 		cont, err = io.ReadAll(p.File)
 	} else {
-		cont, err = postProcess(p.File)
+		cont, err = postProcess(p.File, p.Options)
 		p.Size = int64(len(cont))
 	}
 	return cont, err
@@ -48,10 +49,11 @@ func (p *Payload) ShouldBeFix() bool {
 
 func NewPayload(file io.Reader, name string, size int64, print bool) *Payload {
 	return &Payload{
-		File: file,
-		Name: normalizedFilename(name),
-		Size: size,
-		Print: print,
+		File:    file,
+		Name:    normalizedFilename(name),
+		Size:    size,
+		Print:   print,
+		Options: FixOptions{},
 	}
 }
 

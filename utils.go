@@ -15,6 +15,13 @@ import (
 	"github.com/macdylan/SMFix/fix"
 )
 
+// FixOptions controls how smfix modifies a gcode file.
+type FixOptions struct {
+	NoTrim        bool
+	NoShutoff     bool
+	NoReplaceTool bool
+}
+
 type empty struct{}
 
 func humanReadableSize(size int64) string {
@@ -37,17 +44,17 @@ func normalizedFilename(filename string) string {
 }
 
 /*
-func postProcessFile(file_path string) (out []byte, err error) {
-	var r *os.File
-	if r, err = os.Open(file_path); err != nil {
-		return
-	}
-	defer r.Close()
-	return postProcess(r)
+func postProcessFile(file_path string, opts FixOptions) (out []byte, err error) {
+        var r *os.File
+        if r, err = os.Open(file_path); err != nil {
+                return
+        }
+        defer r.Close()
+        return postProcess(r, opts)
 }
 */
 
-func postProcess(r io.Reader) (out []byte, err error) {
+func postProcess(r io.Reader, opts FixOptions) (out []byte, err error) {
 	var (
 		isFixed = false
 		nl      = []byte("\n")
@@ -80,16 +87,16 @@ func postProcess(r io.Reader) (out []byte, err error) {
 	if !isFixed {
 		funcs := []fix.GcodeModifier{}
 
-		if !noTrim {
+		if !opts.NoTrim {
 			// funcs = append(funcs, fix.GcodeTrimLines)
 		}
-		if !noShutoff {
+		if !opts.NoShutoff {
 			funcs = append(funcs, fix.GcodeFixShutoff)
 		}
 		// if !noPreheat {
 		// 	funcs = append(funcs, fix.GcodeFixPreheat)
 		// }
-		if !noReplaceTool {
+		if !opts.NoReplaceTool {
 			funcs = append(funcs, fix.GcodeReplaceToolNum)
 		}
 		// if !noReinforceTower {
