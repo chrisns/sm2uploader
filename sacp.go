@@ -20,10 +20,10 @@ const (
 )
 
 var (
-	errInvalidSACP    = errors.New("data doesn't look like SACP packet")
-	errInvalidSACPVer = errors.New("SACP version missmatch")
-	errInvalidChksum  = errors.New("SACP checksum doesn't match data")
-	errInvalidSize    = errors.New("SACP package is too short")
+        errInvalidSACP    = errors.New("data doesn't look like SACP packet")
+        errInvalidSACPVer = errors.New("SACP version mismatch")
+        errInvalidChksum  = errors.New("SACP checksum doesn't match data")
+        errInvalidSize    = errors.New("SACP package is too short")
 )
 
 type SACP_pack struct {
