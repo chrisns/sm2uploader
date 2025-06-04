@@ -117,13 +117,10 @@ func getBroadcastAddresses() ([]string, error) {
 		for _, addr := range addrs {
 			if n, ok := addr.(*net.IPNet); ok && !n.IP.IsLoopback() {
 				if v4addr := n.IP.To4(); v4addr != nil {
-					// convert all parts of the masked bits to its maximum value
-					// by converting the address into a 32 bit integer and then
-					// ORing it with the inverted mask
-					baddr := make(net.IP, len(v4addr))
-					binary.BigEndian.PutUint32(baddr, binary.BigEndian.Uint32(v4addr)|^binary.BigEndian.Uint32(n.IP.DefaultMask()))
-					if s := baddr.String(); !addrMap[s] {
-						addrMap[s] = true
+					if baddr := broadcastForIPNet(n); baddr != nil {
+						if s := baddr.String(); !addrMap[s] {
+							addrMap[s] = true
+						}
 					}
 				}
 			}
@@ -135,4 +132,20 @@ func getBroadcastAddresses() ([]string, error) {
 		addrs = append(addrs, addr)
 	}
 	return addrs, nil
+}
+
+// broadcastForIPNet returns the broadcast address for the given network.
+// Only IPv4 networks are supported. If the IP is not IPv4, nil is returned.
+func broadcastForIPNet(n *net.IPNet) net.IP {
+	v4addr := n.IP.To4()
+	if v4addr == nil {
+		return nil
+	}
+	mask := n.Mask
+	if len(mask) == 0 {
+		mask = n.IP.DefaultMask()
+	}
+	baddr := make(net.IP, len(v4addr))
+	binary.BigEndian.PutUint32(baddr, binary.BigEndian.Uint32(v4addr)|^binary.BigEndian.Uint32(mask))
+	return baddr
 }
