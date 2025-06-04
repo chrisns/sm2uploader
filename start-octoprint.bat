@@ -4,7 +4,7 @@ echo Will start the sm2uploader in OctoPrint mode. press Ctrl+C to exit.
 rem set host=-host A350
 set host=
 
-set /p port=Enter a local port num (default is 8899)
+set /p port=Enter a local port number (default is 8899)
 if "%port%"=="" set "port=8899"
 if %port% LSS 1024 (
     echo Port number must be greater than 1024
