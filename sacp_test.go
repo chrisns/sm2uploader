@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestSACPDecodeValid(t *testing.T) {
 	orig := SACP_pack{
@@ -41,5 +44,28 @@ func TestSACPDecodeInvalidHeader(t *testing.T) {
 	err := got.Decode(encoded)
 	if err != errInvalidSACP {
 		t.Fatalf("expected errInvalidSACP, got %v", err)
+	}
+}
+
+func TestSACPEncodeDecodeRoundTrip(t *testing.T) {
+	want := SACP_pack{
+		ReceiverID: 3,
+		SenderID:   4,
+		Attribute:  1,
+		Sequence:   0xBEEF,
+		CommandSet: 0x9A,
+		CommandID:  0xBC,
+		Data:       []byte{0xde, 0xad, 0xbe, 0xef},
+	}
+
+	encoded := want.Encode()
+
+	var got SACP_pack
+	if err := got.Decode(encoded); err != nil {
+		t.Fatalf("Decode returned error: %v", err)
+	}
+
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("round trip mismatch: got %+v want %+v", got, want)
 	}
 }
