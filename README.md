@@ -8,7 +8,7 @@ A command-line tool for send the gcode file to Snapmaker Printers via WiFi conne
 - Upload any type of file does not depend on the head/module limit
 - Simulated a OctoPrint server, so that it can be in any slicing software such as Cura/PrusaSlicer/SuperSlicer/OrcaSlicer send gcode to the printer
 - Smart pre-heat for switch tools, shutoff nozzles that are no longer in use, and other optimization features for multi-extruders.
-- Reinforce the prime tower to avoid it collapse for multi-filament printing
+- Reinforce the prime tower to prevent it from collapsing for multi-filament printing
 - No need to click Yes button on the touch screen every time for authorization connect
 - Support Snapmaker 2 A150/250/350, J1, Artisan
 - Support for multiple platforms including win/macOS/Linux/RaspberryPi
