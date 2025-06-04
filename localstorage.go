@@ -18,13 +18,13 @@ func NewLocalStorage(savePath string) *LocalStorage {
 	}
 
 	if b, err := os.ReadFile(savePath); err == nil {
-		yaml.Unmarshal(b, &s)
+		yaml.Unmarshal(b, s)
 	}
 
 	return s
 }
 
-// Add to add printers to LocalStorage
+// Add stores new printers in LocalStorage.
 func (ls *LocalStorage) Add(printers ...*Printer) {
 	// Iterate over each printer
 	for _, p := range printers {
