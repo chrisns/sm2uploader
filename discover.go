@@ -117,11 +117,10 @@ func getBroadcastAddresses() ([]string, error) {
 		for _, addr := range addrs {
 			if n, ok := addr.(*net.IPNet); ok && !n.IP.IsLoopback() {
 				if v4addr := n.IP.To4(); v4addr != nil {
-					// convert all parts of the masked bits to its maximum value
-					// by converting the address into a 32 bit integer and then
-					// ORing it with the inverted mask
+					// compute the broadcast address by ORing the IPv4 address
+					// with the inverted network mask
 					baddr := make(net.IP, len(v4addr))
-					binary.BigEndian.PutUint32(baddr, binary.BigEndian.Uint32(v4addr)|^binary.BigEndian.Uint32(n.IP.DefaultMask()))
+					binary.BigEndian.PutUint32(baddr, binary.BigEndian.Uint32(v4addr)|^binary.BigEndian.Uint32(n.Mask))
 					if s := baddr.String(); !addrMap[s] {
 						addrMap[s] = true
 					}
