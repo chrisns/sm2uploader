@@ -70,6 +70,7 @@ func (sacp *SACP_pack) Decode(data []byte) error {
 	if len(data) < 13 {
 		return errInvalidSize
 	}
+	// ensure the packet starts with the expected 0xAA55 header bytes
 	if data[0] != 0xAA || data[1] != 0x55 {
 		return errInvalidSACP
 	}
