@@ -134,14 +134,20 @@ func (sacp *SACP_pack) U16Chksum(package_data []byte, length uint16) uint16 {
 	return uint16(check_num & 0xFFFF)
 }
 
-func writeSACPstring(w io.Writer, s string) {
-	binary.Write(w, binary.LittleEndian, uint16(len(s)))
-	w.Write([]byte(s))
+func writeSACPstring(w io.Writer, s string) error {
+	if err := binary.Write(w, binary.LittleEndian, uint16(len(s))); err != nil {
+		return err
+	}
+	_, err := w.Write([]byte(s))
+	return err
 }
 
-func writeSACPbytes(w io.Writer, s []byte) {
-	binary.Write(w, binary.LittleEndian, uint16(len(s)))
-	w.Write(s)
+func writeSACPbytes(w io.Writer, s []byte) error {
+	if err := binary.Write(w, binary.LittleEndian, uint16(len(s))); err != nil {
+		return err
+	}
+	_, err := w.Write(s)
+	return err
 }
 
 func writeLE[T any](w io.Writer, u T) {
@@ -317,10 +323,14 @@ func SACP_start_upload(conn net.Conn, filename string, gcode []byte, timeout tim
 
 	data := bytes.Buffer{}
 
-	writeSACPstring(&data, filename)
+	if err := writeSACPstring(&data, filename); err != nil {
+		return err
+	}
 	writeLE(&data, uint32(len(gcode)))
 	writeLE(&data, package_count)
-	writeSACPstring(&data, hex.EncodeToString(md5hash[:]))
+	if err := writeSACPstring(&data, hex.EncodeToString(md5hash[:])); err != nil {
+		return err
+	}
 
 	if Debug {
 		log.Println("-- Starting upload ...")
@@ -381,9 +391,13 @@ func SACP_start_upload(conn net.Conn, filename string, gcode []byte, timeout tim
 
 			data := bytes.Buffer{}
 			data.WriteByte(0)
-			writeSACPstring(&data, hex.EncodeToString(md5hash[:]))
+			if err := writeSACPstring(&data, hex.EncodeToString(md5hash[:])); err != nil {
+				return err
+			}
 			writeLE(&data, pkgRequested)
-			writeSACPbytes(&data, pkgData)
+			if err := writeSACPbytes(&data, pkgData); err != nil {
+				return err
+			}
 
 			// log.Printf("  sending package %d of %d", pkgRequested+1, package_count)
 			perc := float64(pkgRequested+1) / float64(package_count) * 100.0
