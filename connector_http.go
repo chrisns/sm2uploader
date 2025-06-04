@@ -105,20 +105,17 @@ func (hc *HTTPConnector) Disconnect() (err error) {
 }
 
 func (hc *HTTPConnector) SetToolTemperature(tool int, temperature int) (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
+	err = ErrNotImplemented
 	return
 }
 
 func (hc *HTTPConnector) SetBedTemperature(tool int, temperature int) (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
+	err = ErrNotImplemented
 	return
 }
 
 func (hc *HTTPConnector) Home() (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
+	err = ErrNotImplemented
 	return
 }
 
@@ -150,6 +147,7 @@ func (hc *HTTPConnector) Upload(payload *Payload) (err error) {
 		w.Stop()
 		log.SetOutput(os.Stderr)
 	}()
+	var writeErr error
 
 	file := req.FileUpload{
 		ParamName: "file",
@@ -157,7 +155,6 @@ func (hc *HTTPConnector) Upload(payload *Payload) (err error) {
 		GetFileContent: func() (io.ReadCloser, error) {
 			pr, pw := io.Pipe()
 			go func() {
-				defer pw.Close()
 				content, err := payload.GetContent(NoFix)
 				if !NoFix {
 					log.SetOutput(os.Stderr)
@@ -168,7 +165,12 @@ func (hc *HTTPConnector) Upload(payload *Payload) (err error) {
 					}
 					log.SetOutput(w)
 				}
-				pw.Write(content)
+				if _, werr := pw.Write(content); werr != nil {
+					writeErr = werr
+					pw.CloseWithError(werr)
+					return
+				}
+				pw.Close()
 			}()
 			return pr, nil
 		},
@@ -196,6 +198,11 @@ func (hc *HTTPConnector) Upload(payload *Payload) (err error) {
 		}
 	} else {
 		_, err = r.Post(hc.URL("/upload"))
+	}
+	if err == nil && writeErr != nil {
+		err = writeErr
+	} else if writeErr != nil {
+		log.Printf("HTTP upload write error: %v", writeErr)
 	}
 	return
 }
