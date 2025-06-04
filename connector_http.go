@@ -105,20 +105,17 @@ func (hc *HTTPConnector) Disconnect() (err error) {
 }
 
 func (hc *HTTPConnector) SetToolTemperature(tool int, temperature int) (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
+	err = ErrNotImplemented
 	return
 }
 
 func (hc *HTTPConnector) SetBedTemperature(tool int, temperature int) (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
+	err = ErrNotImplemented
 	return
 }
 
 func (hc *HTTPConnector) Home() (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
+	err = ErrNotImplemented
 	return
 }
 
