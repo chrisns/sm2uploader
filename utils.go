@@ -33,7 +33,9 @@ func humanReadableSize(size int64) string {
 var reFilename = regexp.MustCompile(`^[\.\/\\~]+`)
 
 func normalizedFilename(filename string) string {
-	return reFilename.ReplaceAllString(filename, "")
+	filename = reFilename.ReplaceAllString(filename, "")
+	filename = strings.ReplaceAll(filename, "\\", "/")
+	return filepath.Base(filename)
 }
 
 /*
