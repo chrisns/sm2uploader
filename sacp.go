@@ -20,10 +20,11 @@ const (
 )
 
 var (
-	errInvalidSACP    = errors.New("data doesn't look like SACP packet")
-	errInvalidSACPVer = errors.New("SACP version missmatch")
-	errInvalidChksum  = errors.New("SACP checksum doesn't match data")
-	errInvalidSize    = errors.New("SACP package is too short")
+	errInvalidSACP     = errors.New("data doesn't look like SACP packet")
+	errInvalidSACPVer  = errors.New("SACP version missmatch")
+	errInvalidChksum   = errors.New("SACP checksum doesn't match data")
+	errInvalidSize     = errors.New("SACP package is too short")
+	errTimeoutExceeded = errors.New("timeout exceeded")
 )
 
 type SACP_pack struct {
@@ -278,6 +279,7 @@ func SACP_send_command(conn net.Conn, command_set uint8, command_id uint8, data 
 
 	sequence++
 
+	start := time.Now()
 	conn.SetWriteDeadline(time.Now().Add(timeout))
 	_, err := conn.Write(SACP_pack{
 		ReceiverID: 1,
@@ -298,9 +300,16 @@ func SACP_send_command(conn net.Conn, command_set uint8, command_id uint8, data 
 	}
 
 	for {
-		conn.SetReadDeadline(time.Now().Add(timeout))
-		p, err := SACP_read(conn, timeout)
+		remaining := timeout - time.Since(start)
+		if remaining <= 0 {
+			return errTimeoutExceeded
+		}
+		conn.SetReadDeadline(time.Now().Add(remaining))
+		p, err := SACP_read(conn, remaining)
 		if err != nil {
+			if nerr, ok := err.(net.Error); ok && nerr.Timeout() && time.Since(start) >= timeout {
+				return errTimeoutExceeded
+			}
 			return err
 		}
 
