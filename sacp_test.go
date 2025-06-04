@@ -1,6 +1,12 @@
 package main
 
-import "testing"
+import (
+	"bytes"
+	"io"
+	"net"
+	"testing"
+	"time"
+)
 
 func TestSACPDecodeValid(t *testing.T) {
 	orig := SACP_pack{
@@ -41,5 +47,21 @@ func TestSACPDecodeInvalidHeader(t *testing.T) {
 	err := got.Decode(encoded)
 	if err != errInvalidSACP {
 		t.Fatalf("expected errInvalidSACP, got %v", err)
+	}
+}
+
+func TestSACPSendCommandTimeout(t *testing.T) {
+	c1, c2 := net.Pipe()
+	defer c1.Close()
+	defer c2.Close()
+
+	go io.Copy(io.Discard, c2)
+
+	err := SACP_send_command(c1, 1, 2, bytes.Buffer{}, 50*time.Millisecond)
+	if err == nil {
+		t.Fatal("expected timeout error, got nil")
+	}
+	if nerr, ok := err.(net.Error); !ok || !nerr.Timeout() {
+		t.Fatalf("expected timeout error, got %v", err)
 	}
 }
