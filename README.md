@@ -68,6 +68,21 @@ If `host` in `knownhosts`, `-host printer-id` is very convenient.
 
 Get help: `sm2uploader -h`
 
+## Environment Variables
+
+Several command line flags can also be configured via environment variables:
+
+- `HOST` - default value for `-host`, the printer id, hostname or IP.
+- `KNOWN_HOSTS` - path to the `hosts.yaml` file used for discovery cache.
+- `OCTOPRINT` - listen address for the OctoPrint compatible server.
+- `TOOL1`, `TOOL2` - preheat temperature for tool 1 and tool 2.
+- `BED` - bed preheat temperature.
+- `HOME` - when set to `true`, home the printer before upload.
+- `TIMEOUT` - discovery timeout duration, e.g. `3s`.
+- `NOFIX` - disable the built-in SMFix step.
+- `DEBUG` - enable debug logging.
+- `SLIC3R_PP_OUTPUT_NAME` - override the uploaded file name when called from PrusaSlicer.
+
 ## Fix the "can not be opened because it is from an unidentified developer"
 
 Solution: https://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/
