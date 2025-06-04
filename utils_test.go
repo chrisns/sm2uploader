@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// errReader is an io.Reader that returns an error after the first Read.
+// errReader returns an error on the second read call.
 type errReader struct {
 	data []byte
 	read bool

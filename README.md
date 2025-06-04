@@ -1,13 +1,13 @@
 [中文说明|Chinese Readme](README.zh-cn.md)
 
-# sm2uploader
+# SM2Uploader
 A command-line tool for send the gcode file to Snapmaker Printers via WiFi connection.
 
 ## Features:
 - Auto discover printers (UDP broadcast, same as Snapmaker Luban)
-- Upload any type of file does not depend on the head/module limit
+- Uploads aren’t restricted by the printer’s active toolhead or module
 - Simulated a OctoPrint server, so that it can be in any slicing software such as Cura/PrusaSlicer/SuperSlicer/OrcaSlicer send gcode to the printer
-- Smart pre-heat for switch tools, shutoff nozzles that are no longer in use, and other optimization features for multi-extruders.
+- Smart preheat when switching tools, shut off nozzles that are no longer in use, and other optimization features for multi-extruders.
 - Reinforce the prime tower to avoid it collapse for multi-filament printing
 - No need to click Yes button on the touch screen every time for authorization connect
 - Support Snapmaker 2 A150/250/350, J1, Artisan
@@ -20,7 +20,7 @@ Download [sm2uploader](https://github.com/macdylan/sm2uploader/releases)
 for Windows:
  - locate to the sm2uploader folder, and double-click `start-octoprint.bat`
  - type a port number for octoprint that you wish to listen
- - when `Server started ...` message appears, the startup was successful, do not close the cmd window, and go to the slicer software to setup a OctoPrint printer
+ - when `Server started ...` message appears, the startup was successful, do not close the command prompt window, and go to the slicer software to setup a OctoPrint printer
  - use `http://127.0.0.1:(PORT NUM)` as url, click the Test Connect button, all configuration will be finished if successful.
 
 ```bash
@@ -41,7 +41,7 @@ Uploading file 'code-file2' [1.0 MB]...
   - SACP sending 100%
 Upload finished.
 
-## Use printer id
+## Use printer ID
 $ sm2uploader -host J1V19 /path/to/code-file1
 Discovering ...
 Printer IP: 192.168.1.19
@@ -50,7 +50,7 @@ Uploading file 'code-file1' [1.2 MB]...
   - SACP sending 100%
 Upload finished.
 
-## OctoPrint server (CTRL-C to stop)
+## OctoPrint server (Press CTRL+C to stop the server)
 $ sm2uploader -octoprint 127.0.0.1:8844 -host A350
 Printer IP: 192.168.1.20
 Printer Model: Snapmaker 2 Model A350
@@ -67,6 +67,21 @@ If UDP Discover can not work, use `sm2uploader -host 192.168.1.20 /file.gcode` t
 If `host` in `knownhosts`, `-host printer-id` is very convenient.
 
 Get help: `sm2uploader -h`
+
+## Environment Variables
+
+Several command line flags can also be configured via environment variables:
+
+- `HOST` - default value for `-host`, the printer id, hostname or IP.
+- `KNOWN_HOSTS` - path to the `hosts.yaml` file used for discovery cache.
+- `OCTOPRINT` - listen address for the OctoPrint compatible server.
+- `TOOL1`, `TOOL2` - preheat temperature for tool 1 and tool 2.
+- `BED` - bed preheat temperature.
+- `HOME` - when set to `true`, home the printer before upload.
+- `TIMEOUT` - discovery timeout duration, e.g. `3s`.
+- `NOFIX` - disable the built-in SMFix step.
+- `DEBUG` - enable debug logging.
+- `SLIC3R_PP_OUTPUT_NAME` - override the uploaded file name when called from PrusaSlicer.
 
 ## Fix the "can not be opened because it is from an unidentified developer"
 

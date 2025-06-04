@@ -13,14 +13,15 @@ const (
 )
 
 var (
-	errFileEmpty    = errors.New("File is empty.")
-	errFileTooLarge = errors.New("File is too large.")
+	errFileEmpty      = errors.New("File is empty.")
+	errFileTooLarge   = errors.New("File is too large.")
+	ErrNotImplemented = errors.New("not implemented")
 )
 
 type Payload struct {
-	File io.Reader
-	Name string
-	Size int64
+	File  io.Reader
+	Name  string
+	Size  int64
 	Print bool
 }
 
@@ -48,9 +49,9 @@ func (p *Payload) ShouldBeFix() bool {
 
 func NewPayload(file io.Reader, name string, size int64, print bool) *Payload {
 	return &Payload{
-		File: file,
-		Name: normalizedFilename(name),
-		Size: size,
+		File:  file,
+		Name:  normalizedFilename(name),
+		Size:  size,
 		Print: print,
 	}
 }
@@ -117,25 +118,25 @@ func (c *connector) PreHeatCommands(printer *Printer, tool_1_temperature int, to
 
 			// Send the GCode command to the printer
 			if tool_1_temperature > 0 {
-				if err := h.SetToolTemperature(0, tool_1_temperature); err != nil {
+				if err := h.SetToolTemperature(0, tool_1_temperature); err != nil && !errors.Is(err, ErrNotImplemented) {
 					return err
 				}
 			}
 			if tool_2_temperature > 0 {
-				if err := h.SetToolTemperature(1, tool_2_temperature); err != nil {
+				if err := h.SetToolTemperature(1, tool_2_temperature); err != nil && !errors.Is(err, ErrNotImplemented) {
 					return err
 				}
 			}
 			if bed_temperature > 0 {
-				if err := h.SetBedTemperature(0, bed_temperature); err != nil {
+				if err := h.SetBedTemperature(0, bed_temperature); err != nil && !errors.Is(err, ErrNotImplemented) {
 					return err
 				}
-				if err := h.SetBedTemperature(1, bed_temperature); err != nil {
+				if err := h.SetBedTemperature(1, bed_temperature); err != nil && !errors.Is(err, ErrNotImplemented) {
 					return err
 				}
 			}
 			if home {
-				if err := h.Home(); err != nil {
+				if err := h.Home(); err != nil && !errors.Is(err, ErrNotImplemented) {
 					return err
 				}
 			}

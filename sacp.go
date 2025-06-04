@@ -20,10 +20,11 @@ const (
 )
 
 var (
-	errInvalidSACP    = errors.New("data doesn't look like SACP packet")
-	errInvalidSACPVer = errors.New("SACP version missmatch")
-	errInvalidChksum  = errors.New("SACP checksum doesn't match data")
-	errInvalidSize    = errors.New("SACP package is too short")
+	errInvalidSACP     = errors.New("data doesn't look like SACP packet")
+	errInvalidSACPVer  = errors.New("SACP version missmatch")
+	errInvalidChksum   = errors.New("SACP checksum doesn't match data")
+	errInvalidSize     = errors.New("SACP package is too short")
+	errTimeoutExceeded = errors.New("timeout exceeded")
 )
 
 type SACP_pack struct {
@@ -134,14 +135,20 @@ func (sacp *SACP_pack) U16Chksum(package_data []byte, length uint16) uint16 {
 	return uint16(check_num & 0xFFFF)
 }
 
-func writeSACPstring(w io.Writer, s string) {
-	binary.Write(w, binary.LittleEndian, uint16(len(s)))
-	w.Write([]byte(s))
+func writeSACPstring(w io.Writer, s string) error {
+	if err := binary.Write(w, binary.LittleEndian, uint16(len(s))); err != nil {
+		return err
+	}
+	_, err := w.Write([]byte(s))
+	return err
 }
 
-func writeSACPbytes(w io.Writer, s []byte) {
-	binary.Write(w, binary.LittleEndian, uint16(len(s)))
-	w.Write(s)
+func writeSACPbytes(w io.Writer, s []byte) error {
+	if err := binary.Write(w, binary.LittleEndian, uint16(len(s))); err != nil {
+		return err
+	}
+	_, err := w.Write(s)
+	return err
 }
 
 func writeLE[T any](w io.Writer, u T) {
@@ -272,6 +279,7 @@ func SACP_send_command(conn net.Conn, command_set uint8, command_id uint8, data 
 
 	sequence++
 
+	start := time.Now()
 	conn.SetWriteDeadline(time.Now().Add(timeout))
 	_, err := conn.Write(SACP_pack{
 		ReceiverID: 1,
@@ -292,9 +300,16 @@ func SACP_send_command(conn net.Conn, command_set uint8, command_id uint8, data 
 	}
 
 	for {
-		conn.SetReadDeadline(time.Now().Add(timeout))
-		p, err := SACP_read(conn, timeout)
+		remaining := timeout - time.Since(start)
+		if remaining <= 0 {
+			return errTimeoutExceeded
+		}
+		conn.SetReadDeadline(time.Now().Add(remaining))
+		p, err := SACP_read(conn, remaining)
 		if err != nil {
+			if nerr, ok := err.(net.Error); ok && nerr.Timeout() && time.Since(start) >= timeout {
+				return errTimeoutExceeded
+			}
 			return err
 		}
 
@@ -312,15 +327,19 @@ func SACP_send_command(conn net.Conn, command_set uint8, command_id uint8, data 
 
 func SACP_start_upload(conn net.Conn, filename string, gcode []byte, timeout time.Duration) error {
 	// prepare data for upload begin packet
-	package_count := uint16((len(gcode) / SACP_data_len) + 1)
+	package_count := uint16((len(gcode) + SACP_data_len - 1) / SACP_data_len)
 	md5hash := md5.Sum(gcode)
 
 	data := bytes.Buffer{}
 
-	writeSACPstring(&data, filename)
+	if err := writeSACPstring(&data, filename); err != nil {
+		return err
+	}
 	writeLE(&data, uint32(len(gcode)))
 	writeLE(&data, package_count)
-	writeSACPstring(&data, hex.EncodeToString(md5hash[:]))
+	if err := writeSACPstring(&data, hex.EncodeToString(md5hash[:])); err != nil {
+		return err
+	}
 
 	if Debug {
 		log.Println("-- Starting upload ...")
@@ -344,7 +363,7 @@ func SACP_start_upload(conn net.Conn, filename string, gcode []byte, timeout tim
 	for {
 		// always receive packet, then send response
 		conn.SetReadDeadline(time.Now().Add(timeout))
-		p, err := SACP_read(conn, time.Second*10)
+		p, err := SACP_read(conn, timeout)
 		if err != nil {
 			return err
 		}
@@ -381,9 +400,13 @@ func SACP_start_upload(conn net.Conn, filename string, gcode []byte, timeout tim
 
 			data := bytes.Buffer{}
 			data.WriteByte(0)
-			writeSACPstring(&data, hex.EncodeToString(md5hash[:]))
+			if err := writeSACPstring(&data, hex.EncodeToString(md5hash[:])); err != nil {
+				return err
+			}
 			writeLE(&data, pkgRequested)
-			writeSACPbytes(&data, pkgData)
+			if err := writeSACPbytes(&data, pkgData); err != nil {
+				return err
+			}
 
 			// log.Printf("  sending package %d of %d", pkgRequested+1, package_count)
 			perc := float64(pkgRequested+1) / float64(package_count) * 100.0
