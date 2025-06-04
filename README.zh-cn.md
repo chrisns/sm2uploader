@@ -68,6 +68,21 @@ Request POST /api/files/local completed in 951.080458ms
 
 更多参数：`sm2uploader -h`
 
+## 环境变量
+
+以下环境变量与命令行参数对应，可用来预设默认值：
+
+- `HOST` - 对应 `-host`，指定打印机的 ID、主机名或 IP。
+- `KNOWN_HOSTS` - 保存发现记录的 `hosts.yaml` 路径。
+- `OCTOPRINT` - OctoPrint 兼容服务器的监听地址。
+- `TOOL1`, `TOOL2` - 工具 1 和 2 的预热温度。
+- `BED` - 热床预热温度。
+- `HOME` - 设为 `true` 时在上传前回原点。
+- `TIMEOUT` - 自动发现超时时间，如 `3s`。
+- `NOFIX` - 禁用内置的 SMFix 处理。
+- `DEBUG` - 输出调试信息。
+- `SLIC3R_PP_OUTPUT_NAME` - 从 PrusaSlicer 调用时覆盖上传的文件名。
+
 ## 在 macOS 系统提示文件无法打开的解决方法
 macOS 不允许直接打开未经数字签名的程序，参考解决方案: https://osxdaily.com/2012/07/27/app-cant-be-opened-because-it-is-from-an-unidentified-developer/
 
