@@ -1,6 +1,6 @@
 [中文说明|Chinese Readme](README.zh-cn.md)
 
-# sm2uploader
+# SM2Uploader
 A command-line tool for send the gcode file to Snapmaker Printers via WiFi connection.
 
 ## Features:
