@@ -312,7 +312,7 @@ func SACP_send_command(conn net.Conn, command_set uint8, command_id uint8, data 
 
 func SACP_start_upload(conn net.Conn, filename string, gcode []byte, timeout time.Duration) error {
 	// prepare data for upload begin packet
-	package_count := uint16((len(gcode) / SACP_data_len) + 1)
+	package_count := uint16((len(gcode) + SACP_data_len - 1) / SACP_data_len)
 	md5hash := md5.Sum(gcode)
 
 	data := bytes.Buffer{}
