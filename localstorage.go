@@ -18,7 +18,7 @@ func NewLocalStorage(savePath string) *LocalStorage {
 	}
 
 	if b, err := os.ReadFile(savePath); err == nil {
-		yaml.Unmarshal(b, &s)
+		yaml.Unmarshal(b, s)
 	}
 
 	return s

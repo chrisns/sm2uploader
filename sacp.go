@@ -353,7 +353,7 @@ func SACP_start_upload(conn net.Conn, filename string, gcode []byte, timeout tim
 	for {
 		// always receive packet, then send response
 		conn.SetReadDeadline(time.Now().Add(timeout))
-		p, err := SACP_read(conn, time.Second*10)
+		p, err := SACP_read(conn, timeout)
 		if err != nil {
 			return err
 		}
