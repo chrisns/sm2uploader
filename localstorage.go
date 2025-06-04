@@ -24,7 +24,7 @@ func NewLocalStorage(savePath string) *LocalStorage {
 	return s
 }
 
-// Add to add printers to LocalStorage
+// Add stores new printers in LocalStorage.
 func (ls *LocalStorage) Add(printers ...*Printer) {
 	// Iterate over each printer
 	for _, p := range printers {
