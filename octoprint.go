@@ -186,7 +186,9 @@ func writeResponse(w http.ResponseWriter, status int, body string) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	}
 	w.WriteHeader(status)
-	w.Write([]byte(body))
+	if _, err := w.Write([]byte(body)); err != nil {
+		log.Printf("write response error: %v", err)
+	}
 }
 
 func methodNotAllowedResponse(w http.ResponseWriter, method string) {
