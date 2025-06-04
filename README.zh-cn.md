@@ -50,7 +50,7 @@ Uploading file 'code-file1' [1.2 MB]...
   - SACP sending 100%
 Upload finished.
 
-## 模拟 OctoPrint (CTRL-C 终止运行)
+## 模拟 OctoPrint (按下 CTRL+C 停止服务器)
 $ sm2uploader -octoprint 127.0.0.1:8844 -host A350
 Printer IP: 192.168.1.20
 Printer Model: Snapmaker 2 Model A350
