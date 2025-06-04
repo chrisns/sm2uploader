@@ -6,7 +6,7 @@ A command-line tool for send the gcode file to Snapmaker Printers via WiFi conne
 ## Features:
 - Auto discover printers (UDP broadcast, same as Snapmaker Luban)
 - Upload any type of file does not depend on the head/module limit
-- Simulated a OctoPrint server, so that it can be in any slicing software such as Cura/PrusaSlicer/SuperSlicer/OrcaSlicer send gcode to the printer
+- Simulates an OctoPrint server so any slicing software (Cura, PrusaSlicer, etc.) can send G-code directly to the printer
 - Smart pre-heat for switch tools, shutoff nozzles that are no longer in use, and other optimization features for multi-extruders.
 - Reinforce the prime tower to avoid it collapse for multi-filament printing
 - No need to click Yes button on the touch screen every time for authorization connect
