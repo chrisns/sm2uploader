@@ -15,8 +15,9 @@ type Printer struct {
 }
 
 /*
-NewPrinter create new printer from response
-Snapmaker J1X123P@192.168.1.201|model:Snapmaker J1|status:IDLE|SACP:1
+NewPrinter parses a discovery response such as
+"Snapmaker J1X123P@192.168.1.201|model:Snapmaker J1|status:IDLE|SACP:1"
+and returns a Printer instance.
 */
 func NewPrinter(resp []byte) (*Printer, error) {
 	msg := string(resp)
