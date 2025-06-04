@@ -104,22 +104,25 @@ func (hc *HTTPConnector) Disconnect() (err error) {
 	return
 }
 
+// SetToolTemperature is a no-op for HTTPConnector. The HTTP API does not
+// currently expose a way to control the tool temperature, so this method simply
+// succeeds without doing anything.
 func (hc *HTTPConnector) SetToolTemperature(tool int, temperature int) (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
-	return
+	return nil
 }
 
+// SetBedTemperature is a no-op for HTTPConnector. There is no HTTP endpoint for
+// directly setting the bed temperature, so this method does nothing and returns
+// success.
 func (hc *HTTPConnector) SetBedTemperature(tool int, temperature int) (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
-	return
+	return nil
 }
 
+// Home is intentionally left empty for HTTPConnector. The printers using the
+// HTTP protocol do not provide a dedicated home command, so this function
+// returns nil without sending any request.
 func (hc *HTTPConnector) Home() (err error) {
-	// *** NOT IMPLEMENTED ***
-	err = fmt.Errorf("not implemented")
-	return
+	return nil
 }
 
 func (hc *HTTPConnector) Upload(payload *Payload) (err error) {
