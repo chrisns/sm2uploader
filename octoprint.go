@@ -121,7 +121,7 @@ func startOctoPrintServer(listenAddr string, printer *Printer) error {
 		// Retrieve the uploaded file
 		file, fd, err := r.FormFile("file")
 		if err != nil {
-			bedRequestResponse(w, err.Error())
+			badRequestResponse(w, err.Error())
 			return
 		}
 		defer file.Close()
@@ -199,7 +199,7 @@ func internalServerErrorResponse(w http.ResponseWriter, err string) {
 	http.Error(w, err, http.StatusInternalServerError)
 }
 
-func bedRequestResponse(w http.ResponseWriter, err string) {
+func badRequestResponse(w http.ResponseWriter, err string) {
 	log.Print("Bad request: ", err)
 	http.Error(w, err, http.StatusBadRequest)
 }
