@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -153,26 +154,23 @@ func (hc *HTTPConnector) Upload(payload *Payload) (err error) {
 		ParamName: "file",
 		FileName:  payload.Name,
 		GetFileContent: func() (io.ReadCloser, error) {
-			pr, pw := io.Pipe()
-			go func() {
-				content, err := payload.GetContent(NoFix)
-				if !NoFix {
-					log.SetOutput(os.Stderr)
-					if err != nil {
-						log.Printf("G-Code fix error(ignored): %s", err)
-					} else if payload.ShouldBeFix() {
-						log.Printf("G-Code fixed")
-					}
-					log.SetOutput(w)
+			// Read content first to avoid pipe issues in launchctl
+			content, err := payload.GetContent(NoFix)
+			if !NoFix {
+				log.SetOutput(os.Stderr)
+				if err != nil {
+					log.Printf("G-Code fix error(ignored): %s", err)
+				} else if payload.ShouldBeFix() {
+					log.Printf("G-Code fixed")
 				}
-				if _, werr := pw.Write(content); werr != nil {
-					writeErr = werr
-					pw.CloseWithError(werr)
-					return
-				}
-				pw.Close()
-			}()
-			return pr, nil
+				log.SetOutput(w)
+			}
+			if err != nil {
+				writeErr = err
+				return nil, err
+			}
+			// Return a simple reader instead of pipe
+			return io.NopCloser(bytes.NewReader(content)), nil
 		},
 		FileSize: payload.Size,
 		// ContentType: "application/octet-stream",
