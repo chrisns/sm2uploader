@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	maxMemory = 1024 << 20 // 1024MB
+	maxMemory = 128 << 20 // 128MB
 )
 
 var (
